@@ -6,12 +6,13 @@ import (
 	"net/http"
 	"github.com/robertkrimen/otto"
 	"google.golang.org/appengine"
+	"path/filepath"
 	"sync"
 )
 
-var templates = template.Must(template.ParseFiles("../../src/public/index.html"))
-
-const jsFile = "../../src/src/server.js"
+var absPath, _ = filepath.Abs("src/public/index.html")
+var templates = template.Must(template.ParseFiles(absPath))
+var jsFile, _ = filepath.Abs("src/src/server.js")
 
 type IndexPage struct {
 	HTML			template.HTML
@@ -85,7 +86,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) error {
 	var renderHTML string
 
 	if len(r.Header["X-Devserver"]) > 0 {
-		return templates.ExecuteTemplate(w, "../../src/public/index.html", IndexPage {
+		return templates.ExecuteTemplate(w, "src/public/index.html", IndexPage {
 			HTML: "",
 		})
 	}
@@ -96,7 +97,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	return templates.ExecuteTemplate(w, "../../src/public/index.html", IndexPage {
+	return templates.ExecuteTemplate(w, "src/public/index.html", IndexPage {
 		HTML: template.HTML(renderHTML),
 	})
 }
